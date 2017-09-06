@@ -21,4 +21,10 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     get auth_callback_url + "?error=access_denied"
     assert_redirected_to controller: "auth", action: "index"
   end
+
+  test "callback with valid access code persists a new User to the database" do
+    get auth_callback_url + "?code=" + "good_code"
+    @user = User.find_by(spotify_id: "spotifyuser")
+    assert @user != nil
+  end
 end
