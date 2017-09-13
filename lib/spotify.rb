@@ -1,12 +1,12 @@
 module SpotifyService
 
-  @@spotify_redirect_uri = "http://localhost:3000/auth/callback/"
+  SpotifyRedirectUri = "http://localhost:3000/auth/callback/"
 
-  def self.get_token_reponse(code)
+  def SpotifyService.get_token_response(code)
     @token_params = {
       'grant_type' => 'authorization_code',
       'code' => code,
-      'redirect_uri' => @@spotify_redirect_uri,
+      'redirect_uri' => SpotifyRedirectUri,
       'client_id' => 'e6f13cbb22ef4cecb1bfafa4312d7bb1',
       'client_secret' => '0cd9bcedf3244563ab8249fdfe582e88'
     }
@@ -15,7 +15,7 @@ module SpotifyService
     return ActiveSupport::JSON.decode(@token_response.body)
   end
 
-  def self.get_user_info(token)
+  def SpotifyService.get_user_info(token)
     @uri = URI.parse('https://api.spotify.com/v1/me')
     @http = Net::HTTP.new(@uri.host, @uri.port)
     @http.use_ssl = true
