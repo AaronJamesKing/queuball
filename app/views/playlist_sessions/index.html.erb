@@ -3,3 +3,9 @@
 <p>Here's a list of Playlist Sessions you've been a part of</p>
 
 <%= link_to "Logout", :controller => :auth, :action => :logout %>
+
+<ul>
+<% @playlist_sessions.each do |ps| %>
+  <li class="playlist-session"><%= ps.name %></li>
+<% end %>
+</ul>

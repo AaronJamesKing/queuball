@@ -1,5 +1,6 @@
 require 'test_helper'
 require 'time'
+require 'spotify'
 
 class PlaylistSessionsControllerTest < ActionDispatch::IntegrationTest
   def setup
@@ -19,39 +20,35 @@ class PlaylistSessionsControllerTest < ActionDispatch::IntegrationTest
     @user = User.find_by(spotify_id: "spotify_user")
 
     # create some Playlist Sessions associated with the user
-    @ps1 = PlaylistSession.create({user_id: "spotify_user"})
-    @ps2 = PlaylistSession.create({user_id: "spotify_user"})
+    @ps1 = @user.playlist_sessions.create!(name: "playlist_1")
+    @ps2 = @user.playlist_sessions.create!(name: "playlist_2")
   end
 
   test "Index lists all of the user's Playlist Sessions" do
     get playlist_sessions_url
-    assert_select "ul li.playlist_session", 2
+    #puts @response.body
+    assert_select "ul li.playlist-session", 2
   end
 
   test "New Playlist Session page contains all the necessary fields to create a new Playlist Session" do
     get new_playlist_session_url
     assert_select "form" do
-      assert_select "input[name=something]"
+      assert_select "input[id=playlist_session_user_id]"
+      assert_select "input[type=hidden]"
     end
   end
 
-  test "User can create a new Playlist Session" do
-    @ps = PlaylistSession.new(user_id: @user.id, name: "Newest Playlist")
-    post playlist_sessions_url, params: @ps.attributes
+  test "User can create a new Playlist Session which redirects to that Playlist Session" do
+    @ps = @user.playlist_sessions.new(name: "Newest Playlist")
+    post playlist_sessions_url, params: {playlist_session: @ps.attributes}
     @ps = PlaylistSession.find_by(name: "Newest Playlist")
-    assert @ps != nil
-  end
-
-  test "Creating a new Playlist Session redirects to the Index page" do
-    post playlist_sessions_url, params: {}
     assert_response 302
-    assert_redirected_to playlist_sessions_url
+    assert_redirected_to playlist_session_url(@ps.id)
   end
 
   test "Failing to create a Session Playlist returns to the New Playlist Session page and displays error messages" do
-    post playlist_sessions_url, params: {"bad" => "wrong"}
+    post playlist_sessions_url, :params => {playlist_session: {name: "", user_id: @user.id}}
     assert_response 400
-    assert_redirected_to new_playlist_session_url
-    assert_select "div.error"
+    assert_select "div.field_with_errors"
   end
 end
