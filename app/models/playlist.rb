@@ -1,4 +1,4 @@
-class PlaylistSession < ApplicationRecord
+class Playlist < ApplicationRecord
   serialize :members, Array
   belongs_to :user
   validates :user, :name, presence: true

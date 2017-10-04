@@ -20,7 +20,7 @@ class AuthController < ApplicationController
       @success = @user.update(@user_fields)
       if (@success)
         session[:current_user_id] = @user.spotify_id
-        redirect_to playlist_sessions_url
+        redirect_to playlists_url
       else
         redirect_to action: "index"
       end
@@ -64,7 +64,7 @@ class AuthController < ApplicationController
 
   def check_for_authenticated_user
     if (current_user != nil)
-      redirect_to playlist_sessions_url
+      redirect_to playlists_url
     end
   end
 end

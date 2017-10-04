@@ -1,0 +1,13 @@
+<h1>Playlists</h1>
+<p>Find me in app/views/playlist/index.html.erb</p>
+<p>Here's a list of Playlists you've been a part of</p>
+
+<%= link_to "Logout", :controller => :auth, :action => :logout %>
+
+<ul>
+<% @playlists.each do |ps| %>
+  <li class="playlist">
+    <a href="<%= playlist_url(ps.id) %>"><%= ps.name %></a>
+  </li>
+<% end %>
+</ul>

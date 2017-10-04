@@ -19,7 +19,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     get auth_callback_url + "?code=good_code"
     controller.session[:current_user_id] = "spotify_user"
     get auth_index_url
-    assert_redirected_to controller: "playlist_sessions", action: "index"
+    assert_redirected_to controller: "playlists", action: "index"
   end
 
   test "landing page includes link to Spotify's Authorization endpoint" do
@@ -48,7 +48,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     assert controller.session[:current_user_id] == "spotify_user"
   end
 
-  test "successful authentication redirects the user to the Playlist Session index page" do
+  test "successful authentication redirects the user to the Playlist index page" do
     get auth_callback_url + "?code=good_code"
     assert_response 302
   end

@@ -1,5 +1,0 @@
-<%= form_for @playlist_session, url: {action: "create"}, html: {class: "playlist-session-form"} do |f| %>
-  <%= f.hidden_field :user_id, { :value => @playlist_session.user_id } %>
-  <%= f.text_field :name %>
-  <%= f.submit "Create" %>
-<% end %>
