@@ -1,10 +1,13 @@
 class PlaylistSessionsController < ApplicationController
+  before_action :find_playlist_session, only: [:show, :update, :destroy]
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
+
   def index
     @playlist_sessions = PlaylistSession.where(user_id: current_user().id)
   end
 
   def show
-    @playlist_session = PlaylistSession.find_by(id: parameters[:id])
+    nil
   end
 
   def new
@@ -29,6 +32,20 @@ class PlaylistSessionsController < ApplicationController
   end
 
   def destroy
-    nil
+    if @playlist_session.destroy
+      redirect_to action: "index"
+    else
+      render "500.html", status: 500
+    end
+  end
+
+private
+
+  def find_playlist_session
+    @playlist_session = PlaylistSession.find_by!(id: params[:id])
+  end
+
+  def not_found
+    render "404.html", status: 404
   end
 end

@@ -6,6 +6,8 @@
 
 <ul>
 <% @playlist_sessions.each do |ps| %>
-  <li class="playlist-session"><%= ps.name %></li>
+  <li class="playlist-session">
+    <a href="<%= playlist_session_url(ps.id) %>"><%= ps.name %></a>
+  </li>
 <% end %>
 </ul>
