@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170918231310) do
+ActiveRecord::Schema.define(version: 20171006010439) do
+
+  create_table "members", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "playlist_id"
+    t.integer "invited_by"
+    t.integer "accepted_by"
+    t.index ["playlist_id"], name: "index_members_on_playlist_id"
+    t.index ["user_id"], name: "index_members_on_user_id"
+  end
 
   create_table "playlists", force: :cascade do |t|
     t.integer "user_id"
