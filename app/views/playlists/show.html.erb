@@ -1,3 +1,12 @@
 <h1><%= @playlist.name %></h1>
 <h2>By <%= @playlist.user.spotify_id %></h2>
 
+<%= render "member_form.erb" %>
+
+<ul>
+<% @members.each do |m| %>
+  <li class="playlist">
+    <%= m.user.spotify_id %>
+  </li>
+<% end %>
+</ul>

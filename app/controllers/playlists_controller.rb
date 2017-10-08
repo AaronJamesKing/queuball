@@ -7,7 +7,9 @@ class PlaylistsController < ApplicationController
   end
 
   def show
-    nil
+    @member = Member.new
+    @members = Member.where(playlist_id: @playlist.id)
+    Rails.logger.debug(@members)
   end
 
   def new

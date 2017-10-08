@@ -74,9 +74,9 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "Playlist owner can invite another User to be a Playlist Member, and they can accept it" do
-    post playlist_members_url(@ps1.id), :params => {user_spotify_id: @other_user.spotify_id}
+    post playlist_invite_url(@ps1.id), :params => {user_spotify_id: @other_user.spotify_id}
     @member = Member.find_by!(user_id: @other_user.id, playlist_id: @ps1.id)
-    put member_url(@member.id), :params => {member: {accepted_by: @other_user.id}}
+    put playlist_member_url(@ps1.id, @member.id), :params => {member: {accepted_by: @other_user.id}}
     assert_not_nil Member.find_by(user_id: @other_user.id, playlist_id: @ps1.id, accepted_by: @other_user.id)
   end
 end

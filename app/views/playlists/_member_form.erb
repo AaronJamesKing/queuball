@@ -1,0 +1,4 @@
+<%= form_for @member, url: playlist_invite_url(@playlist.id), html: {class: "playlist-member-form"} do |f| %>
+  <%= f.text_field :user_spotify_id %>
+  <%= f.submit "Create" %>
+<% end %>

@@ -5,7 +5,8 @@ Rails.application.routes.draw do
   get 'auth/logout'
 
   resources :playlists do
-    resources :members, only: [:new, :create, :update, :delete]
+    resources :members, only: [:new, :update, :delete]
+    post 'invite', to: 'members#invite'
   end
 
   root 'auth#index'

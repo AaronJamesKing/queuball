@@ -1,6 +1,7 @@
 class Playlist < ApplicationRecord
   serialize :members, Array
   belongs_to :user
+  has_many :members
   validates :user, :name, presence: true
   validates :spotify_id, uniqueness: true, :allow_blank => true
 
