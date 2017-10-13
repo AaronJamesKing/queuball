@@ -1,8 +1,22 @@
 <h1>Playlists</h1>
 <p>Find me in app/views/playlist/index.html.erb</p>
-<p>Here's a list of Playlists you've been a part of</p>
 
-<%= link_to "Logout", :controller => :auth, :action => :logout %>
+<% if !@member_requests.empty? %>
+<h2>Pending Invitations:</h2>
+<ul>
+<% @member_requests.each do |m| %>
+  <li class="member">
+    <%= m.playlist.name %>
+    <%= form_for m, url: playlist_member_url(m.playlist.id, m.id), method: "put", html: {class: "playlist-member-form"} do |f| %>
+      <%= f.hidden_field :accepted_by, { :value => @current_user.id } %>
+      <%= f.submit "Accept" %>
+    <% end %>
+  </li>
+<% end %>
+</ul>
+<% end %>
+
+<p>Here's a list of Playlists you've been a part of</p>
 
 <ul>
 <% @playlists.each do |ps| %>
@@ -11,3 +25,5 @@
   </li>
 <% end %>
 </ul>
+
+<%= link_to "Logout", :controller => :auth, :action => :logout %>

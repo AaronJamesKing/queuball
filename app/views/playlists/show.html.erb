@@ -3,9 +3,10 @@
 
 <%= render "member_form.erb" %>
 
+<h2>Members:</h2>
 <ul>
 <% @members.each do |m| %>
-  <li class="playlist">
+  <li class="member">
     <%= m.user.spotify_id %>
   </li>
 <% end %>

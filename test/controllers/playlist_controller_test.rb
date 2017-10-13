@@ -33,12 +33,12 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
 
     # create some Playlists associated with the user
     @ps1 = @user.playlists.create!(name: "playlist_1")
-    @ps2 = @user.playlists.create!(name: "playlist_2")
+    #@ps2 = @user.playlists.create!(name: "playlist_2")
   end
 
   test "Index lists all of the user's Playlists" do
     get playlists_url
-    assert_select "ul li.playlist", 2
+    assert_select "ul li.playlist", 1
   end
 
   test "Playlist page shows correct details" do
@@ -68,15 +68,34 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "User can delete a Playlist" do
-    delete playlist_url(@ps2.id)
+    delete playlist_url(@ps1.id)
     assert_redirected_to playlists_url
-    assert_nil Playlist.find_by(id: @ps2.id)
+    assert_nil Playlist.find_by(id: @ps1.id)
   end
 
   test "Playlist owner can invite another User to be a Playlist Member, and they can accept it" do
-    post playlist_invite_url(@ps1.id), :params => {user_spotify_id: @other_user.spotify_id}
+    # Invite the user to be a member
+    post playlist_invite_url(@ps1.id), :params => {member: {user_spotify_id: @other_user.spotify_id}}
     @member = Member.find_by!(user_id: @other_user.id, playlist_id: @ps1.id)
+    assert_select "ul li.member", 0
+
+    # Accept the membership
     put playlist_member_url(@ps1.id, @member.id), :params => {member: {accepted_by: @other_user.id}}
     assert_not_nil Member.find_by(user_id: @other_user.id, playlist_id: @ps1.id, accepted_by: @other_user.id)
+    follow_redirect!
+    assert_select "ul li.member", 1
+  end
+
+  test "Non-Members cannot view a Playlist" do
+    # Sign User2 in
+    get auth_callback_url + "?code=TOKEN2"
+    # Go to unauthorized Playlist
+    get playlist_url(@ps1.id)
+    assert_response 401
+    # Authorize
+    Member.create!(user_id: @other_user.id, playlist_id: @ps1.id, invited_by: @user.id, accepted_by: @other_user.id)
+    # Retry
+    get playlist_url(@ps1.id)
+    assert_response 200
   end
 end
