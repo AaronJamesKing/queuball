@@ -31,9 +31,8 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
     get auth_callback_url + "?code=TOKEN1"
     @user = User.find_by(spotify_id: "spotify_user1")
 
-    # create some Playlists associated with the user
-    @ps1 = @user.playlists.create!(name: "playlist_1")
-    #@ps2 = @user.playlists.create!(name: "playlist_2")
+    # create a Playlist associated with the user
+    @playlist = @user.playlists.create!(name: "playlist_1")
   end
 
   test "Index lists all of the user's Playlists" do
@@ -42,8 +41,8 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "Playlist page shows correct details" do
-    get playlist_url(@ps1)
-    assert_select "h1", @ps1.name
+    get playlist_url(@playlist)
+    assert_select "h1", @playlist.name
   end
 
   test "New Playlist page contains all the necessary fields to create a new Playlist" do
@@ -68,20 +67,20 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "User can delete a Playlist" do
-    delete playlist_url(@ps1.id)
+    delete playlist_url(@playlist.id)
     assert_redirected_to playlists_url
-    assert_nil Playlist.find_by(id: @ps1.id)
+    assert_nil Playlist.find_by(id: @playlist.id)
   end
 
   test "Playlist owner can invite another User to be a Playlist Member, and they can accept it" do
     # Invite the user to be a member
-    post playlist_invite_url(@ps1.id), :params => {member: {user_spotify_id: @other_user.spotify_id}}
-    @member = Member.find_by!(user_id: @other_user.id, playlist_id: @ps1.id)
+    post playlist_invite_url(@playlist.id), :params => {member: {user_spotify_id: @other_user.spotify_id}}
+    @member = Member.find_by!(user_id: @other_user.id, playlist_id: @playlist.id)
     assert_select "ul li.member", 0
 
     # Accept the membership
-    put playlist_member_url(@ps1.id, @member.id), :params => {member: {accepted_by: @other_user.id}}
-    assert_not_nil Member.find_by(user_id: @other_user.id, playlist_id: @ps1.id, accepted_by: @other_user.id)
+    put playlist_member_url(@playlist.id, @member.id), :params => {member: {accepted_by: @other_user.id}}
+    assert_not_nil Member.find_by(user_id: @other_user.id, playlist_id: @playlist.id, accepted_by: @other_user.id)
     follow_redirect!
     assert_select "ul li.member", 1
   end
@@ -90,12 +89,12 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
     # Sign User2 in
     get auth_callback_url + "?code=TOKEN2"
     # Go to unauthorized Playlist
-    get playlist_url(@ps1.id)
+    get playlist_url(@playlist.id)
     assert_response 401
     # Authorize
-    Member.create!(user_id: @other_user.id, playlist_id: @ps1.id, invited_by: @user.id, accepted_by: @other_user.id)
+    Member.create!(user_id: @other_user.id, playlist_id: @playlist.id, invited_by: @user.id, accepted_by: @other_user.id)
     # Retry
-    get playlist_url(@ps1.id)
+    get playlist_url(@playlist.id)
     assert_response 200
   end
 end
