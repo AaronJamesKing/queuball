@@ -4,6 +4,7 @@ class TracksController < ApplicationController
 
   def new
     @playlist_id = params[:playlist_id]
+    render "search"
   end
 
   def create
